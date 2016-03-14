@@ -30,6 +30,14 @@ public class DefaultEventManager implements EventManager
 
         sendEventTo(event, calculateListeners(event.getClass()));
         
+        //Iterate and send event over the parents until Object class reached
+        Class itClass = event.getClass().getSuperclass();
+        while(itClass != Object.class)
+        {
+        	sendEventTo(event, calculateListeners(itClass));
+        	itClass = itClass.getSuperclass();
+        }
+        
         for (Object it : emptyListeners.values())
         {
         	InterviewEventListener eventListener = (InterviewEventListener) it;

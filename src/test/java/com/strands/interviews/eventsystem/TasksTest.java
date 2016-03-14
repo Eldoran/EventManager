@@ -12,7 +12,7 @@ public class TasksTest
     private EventManager eventManager = new DefaultEventManager();
     
     /*
-     * Testing if eventListener is not called publishing event with subclass
+     * Testing if eventListener is called publishing event with subclass
      */
     @Test
     public void testRegisterSimpleEventAndPublishSubEvent()
@@ -20,6 +20,18 @@ public class TasksTest
         EventListenerMock eventListenerMock = new EventListenerMock(new Class[]{SimpleEvent.class});
         eventManager.registerListener("some.key", eventListenerMock);
         eventManager.publishEvent(new SubEvent(this));
+        assertTrue(eventListenerMock.isCalled());
+    }
+    
+    /*
+     * Testing if eventListener with subclass is not called publishing event with parent class
+     */
+    @Test
+    public void testRegisterSubEventAndPublishSimpleEvent()
+    {
+        EventListenerMock eventListenerMock = new EventListenerMock(new Class[]{SubEvent.class});
+        eventManager.registerListener("some.key", eventListenerMock);
+        eventManager.publishEvent(new SimpleEvent(this));
         assertFalse(eventListenerMock.isCalled());
     }
     
@@ -34,4 +46,5 @@ public class TasksTest
         eventManager.publishEvent(new SubEvent(this));
         assertTrue(eventListenerMock.isCalled());
     }
+    
 }
