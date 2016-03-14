@@ -22,6 +22,16 @@ public class TasksTest
         eventManager.publishEvent(new SubEvent(this));
         assertFalse(eventListenerMock.isCalled());
     }
-
-
+    
+    /*
+     * Testing if EventListener is constructed with empty classes and called after publish event 
+     */
+    @Test
+    public void testRegisterEmptyListenertAndPublish()
+    {
+        EventListenerMock eventListenerMock = new EventListenerMock(new Class[]{});
+        eventManager.registerListener("some.key", eventListenerMock);
+        eventManager.publishEvent(new SubEvent(this));
+        assertTrue(eventListenerMock.isCalled());
+    }
 }

@@ -18,6 +18,7 @@ public class DefaultEventManager implements EventManager
 {
     private Map listeners = new HashMap();
     private Map listenersByClass = new HashMap();
+    private Map emptyListeners = new HashMap();
 
     public void publishEvent(InterviewEvent event)
     {
@@ -28,6 +29,13 @@ public class DefaultEventManager implements EventManager
         }
 
         sendEventTo(event, calculateListeners(event.getClass()));
+        
+        for (Object it : emptyListeners.values())
+        {
+        	InterviewEventListener eventListener = (InterviewEventListener) it;
+            eventListener.handleEvent(event);
+        }
+
     }
 
     private Collection calculateListeners(Class eventClass)
@@ -47,6 +55,9 @@ public class DefaultEventManager implements EventManager
             unregisterListener(listenerKey);
 
         Class[] classes = listener.getHandledEventClasses();
+        
+    	if(classes.length==0)
+    		emptyListeners.put(listenerKey, listener);
 
         for (int i = 0; i < classes.length; i++)
             addToListenerList(classes[i], listener);
@@ -65,6 +76,7 @@ public class DefaultEventManager implements EventManager
         }
 
         listeners.remove(listenerKey);
+        emptyListeners.remove(listenerKey);
     }
 
     private void sendEventTo(InterviewEvent event, Collection listeners)
@@ -91,4 +103,6 @@ public class DefaultEventManager implements EventManager
     {
         return listeners;
     }
+    
+
 }
